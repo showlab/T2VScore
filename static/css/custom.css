@@ -1,0 +1,178 @@
+body {
+  color: black;
+}
+
+.replay {
+  cursor: pointer;
+  color:#2296f3ff;
+  font-size: 12pt;
+  display: inline-block;
+  font-style: normal;
+}
+
+.teaser {
+  margin: 0.5rem auto 1rem auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.teaser-caption {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.teaser-caption img {
+  width: 15px;
+  height: 15px;
+  vertical-align: middle;
+}
+
+.layered-video {
+  position: absolute;
+  max-width: 80%;
+  z-index: 2;
+  /* Center video for safari mobile */
+  transform: translate(-50%,0%);
+  left: 50%;
+}
+
+.info-icon {
+  width: 15px;
+  margin-right: 5px;
+}
+
+.btn-caption {
+  padding: 0px !important;
+  margin: 0px !important;
+  color: gray;
+  font-family: 'DM Sans';
+  background-color: white;
+}
+
+.caption {
+  margin-bottom: 20px;
+  font-size: 12pt;
+  color: black;
+  text-align: center;
+  font-style: italic;
+}
+
+.has-text-purple {
+ color: #683d68ff;
+}
+
+/* Style the range input */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 80%;
+  margin: 15px;
+}
+
+/* Style the track */
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 10px;
+  cursor: pointer;
+  background: #ddd; /* Set the background color of the track */
+  border-radius: 2px;
+}
+
+/* Style the fill color of the track */
+input[type="range"]::-webkit-slider-thumb {
+  height: 25px;
+  width: 25px;
+  background: url('../../assets/icon.png') center/cover;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -8.5px;
+  box-shadow: none !important;
+}
+
+.btn {
+  box-shadow: none !important;
+}
+
+.btn-row {
+  font-weight: bold;
+  color: black;
+  margin-bottom: 15px;
+  font-size: 10.5pt;
+}
+
+.btn-select {
+  white-space: normal;
+  text-align: left;
+  font-size: 10.5pt;
+  padding: 5px;
+  font-family: 'DM Mono';
+  margin: 4px 2px;
+  background-color: #edededff;
+  color: black;
+}
+
+.btn-select:hover {
+  font-weight: bold;
+}
+
+.btn-active {
+  font-weight: bold;
+  background-color: #683d68ff;
+  color: #fff9bfff;
+}
+
+.btn-outline-danger,
+.btn-outline-danger:hover,
+.btn-outline-danger:active,
+.btn-outline-danger:disabled {
+  cursor: default;
+  background-color: transparent;
+  color: #cc0000ff;
+  border-color: #cc0000ff;
+  opacity: 1.0;
+}
+
+hr {
+  background-color: #edededff;
+  margin: auto;
+  width: 90vw;
+}
+
+/* 
+  https://github.com/rl-diffusion/rl-diffusion.github.io
+*/
+
+.results-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.1rem;
+  justify-content: center;
+}
+
+.results-grid>div{
+  display: grid;
+  grid-template-rows: fit-content(100%);
+  max-width: 80%;
+  min-width: 350px;
+  gap: 0.1rem;
+  align-items: center;
+  justify-items: center;
+  margin: auto 0;
+  overflow: hidden;
+}
+
+.results-grid .results-single {
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.results-grid .results-pair {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.results-grid>div>div {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-self: center;
+  width: 100%;
+  align-items: center;
+}

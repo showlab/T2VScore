@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="icon" type="image/png" href="assets/showlab.ico" />
+  <title>Towards A Better Metric for Text-to-Video Generation</title>
+  <meta name="description" content="We introduce T2VScore to automatically evaluate text-conditioned generated videos.">
+  <meta name="keywords" content="T2VScore, text-to-video, metric, evaluation, AIGC">
+
+  <meta property="twitter:title" content="Towards A Better Metric for Text-to-Video Generation" />
+  <meta property="twitter:description" content="We introduce T2VScore to automatically evaluate text-conditioned generated videos." />
+  <!-- <meta property="twitter:video" content="" /> -->
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Towards A Better Metric for Text-to-Video Generation">
+  <meta property="og:url" content="https://showlab.github.io/T2VScore/"/>
+  <!-- <meta property="og:video" content="" /> -->
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3LCW3JHW2E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-3LCW3JHW2E');
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <!-- popper used for tooltips -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <!-- bootstrap styling used for carousel -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/custom.css">
+  <link rel="stylesheet" href="./static/css/fonts.css">
+
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/interactions.js"></script>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body" style="padding: 3rem 1.5rem 0.5rem 1.5rem;">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-3 publication-title">Towards A Better Metric for Text-to-Video Generation</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://zhangjiewu.github.io/" target="_blank">Jay Zhangjie Wu</a><sup>1*</sup>
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=2z4sraUAAAAJ" target="_blank">Guian Fang</a><sup>1*</sup>
+            </span>
+            <span class="author-block">
+              <a href="https://teowu.github.io/" target="_blank">Haoning Wu</a><sup>4*</sup>
+            </span>
+            <span class="author-block">
+              <a href="https://xinntao.github.io/" target="_blank">Xintao Wang</a><sup>3</sup>
+            </span>
+            <span class="author-block">
+              <a href="https://geyixiao.com/" target="_blank">Yixiao Ge</a><sup>3</sup>
+            </span>
+            <br>
+            <span class="author-block">
+              <a href="https://vinthony.github.io/academic/" target="_blank">Xiaodong Cun</a><sup>3</sup>
+            </span>
+            <span class="author-block">
+              <a href="https://junhaozhang98.github.io/" target="_blank">David Junhao Zhang</a><sup>1</sup>
+            </span>
+            <span class="author-block">
+              <a href="https://jia-wei-liu.github.io/" target="_blank">Jia-Wei Liu</a><sup>1</sup>
+            </span>
+            <span class="author-block">
+              <a href="https://ycgu.site/" target="_blank">Yuchao Gu</a><sup>1</sup>
+            </span>
+            <span class="author-block">
+              <a href="https://ruizhaocv.github.io/" target="_blank">Rui Zhao</a><sup>1</sup>
+            </span>
+            <br>
+            <span class="author-block">
+              <a href="https://personal.ntu.edu.sg/wslin/Home.html" target="_blank">Weisi Lin</a><sup>4</sup>
+            </span>
+            <span class="author-block">
+              <a href="https://www.comp.nus.edu.sg/~whsu/" target="_blank">Wynne Hsu</a><sup>2</sup>
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=4oXBp9UAAAAJ" target="_blank">Ying Shan</a><sup>3</sup>
+            </span>
+            <span class="author-block">
+              <a href="https://sites.google.com/view/showlab/home?authuser=0" target="_blank">Mike Zheng Shou</a><sup>1</sup>
+            </span>
+          </div>
+          
+          <div class="is-size-6 publication-authors">
+            <span class="author-block"><i>(* equal contribution)</i></span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Show Lab, <sup>2</sup>National University of Singapore</span>
+            <span class="author-block"><sup>3</sup>ARC Lab, Tencent PCG</span>
+            <br>
+            <span class="author-block"><sup>4</sup>Nanyang Technological University</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/xxxx.xxxxx" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/showlab/T2VScore" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <span class="link-block">
+                <a href="" class="external-link button is-normal is-rounded is-dark" disabled>
+                  <span class="icon">
+                      <i class="fa fa-database"></i>
+                  </span>
+                  <span>TVGE Dataset</span>
+                  </a>
+              </span>
+              <!-- Huggingface Demo Link. -->
+              <span class="link-block">
+                <a href="" class="external-link button is-normal is-rounded is-dark" disabled>
+                  <span class="icon">
+                    <img src="assets/hf-logo.svg" style="display:block;width:330px;height:240px" />
+                  </span>
+                  <span>Huggingface Demo</span>
+                </a>
+              </span>
+              <br>
+              <span class="link-block"><i>(code, data and demo will be open-sourced soon)</i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Abstract -->
+<section style="padding: 1.5rem 1.5rem 3rem 1.5rem;" class="section">
+  <div class="container is-max-desktop">
+    <div class="teaser-caption caption columns is-centered has-text-centered">
+      <div>
+        <!-- <img src="assets/replay.png" />
+        <span class="replay">Replay Video.</span> -->
+        <span><b>TL;DR: </b>We introduce T2VScore to automatically evaluate text-conditioned generated videos.</span>
+      </div>
+    </div>
+    <div class="results-grid">
+      <!-- <div class="results-single" style="width:55%">
+        <video id="teaser" autoplay muted playsinline loop>
+          <source src="assets/teaser.mp4" type="video/mp4">
+        </video>
+      </div> -->
+      <div id="teaserCarousel" class="carousel slide" data-ride="carousel" data-interval="7000">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <video id="teaser" autoplay muted playsinline loop>
+              <source src="assets/teaser/01.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="carousel-item">
+            <video id="teaser" autoplay muted playsinline loop>
+              <source src="assets/teaser/02.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="carousel-item">
+            <video id="teaser" autoplay muted playsinline loop>
+              <source src="assets/teaser/03.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="carousel-item">
+            <video id="teaser" autoplay muted playsinline loop>
+              <source src="assets/teaser/04.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="carousel-item">
+            <video id="teaser" autoplay muted playsinline loop>
+              <source src="assets/teaser/05.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="carousel-item">
+            <video id="teaser" autoplay muted playsinline loop>
+              <source src="assets/teaser/06.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <!-- 
+        <ol class="carousel-indicators" style="bottom: -35px;">
+          <li data-target="#teaserCarousel" data-slide-to="0" class="active"></li>
+          <li data-target="#teaserCarousel" data-slide-to="1"></li>
+          <li data-target="#teaserCarousel" data-slide-to="2"></li>
+          <li data-target="#teaserCarousel" data-slide-to="3"></li>
+          <li data-target="#teaserCarousel" data-slide-to="4"></li>
+        </ol> -->
+
+        <a class="carousel-control-prev" href="#teaserCarousel" role="button" data-slide="prev">
+          <div class="slider-navigation-previous">
+            <svg viewBox="0 0 50 80" xml:space="preserve" style="margin-right: 4px;">
+              <polyline fill="white" stroke-width=".5em" stroke-linecap="round"
+                stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 ">
+              </polyline>
+            </svg>
+          </div>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#teaserCarousel" role="button" data-slide="next">
+          <div class="slider-navigation-next">
+            <svg viewBox="0 0 50 80" xml:space="preserve" style="margin-left: 4px;">
+              <polyline fill="white" stroke-width=".5em" stroke-linecap="round"
+                stroke-linejoin="round" points="0.375,0.375 45.63,38.087 0.375,75.8 ">
+              </polyline>
+            </svg>
+          </div>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+    </div>
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 style="margin-top: 2.5rem;" class="title is-4">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Generative models have demonstrated remarkable capability in synthesizing high-quality text, images, and videos. 
+            For video generation, contemporary text-to-video models exhibit impressive capabilities, crafting visually stunning videos. 
+            Nonetheless, evaluating such videos poses significant challenges. Current research predominantly employs automated metrics such as FVD, IS, and CLIP Score. 
+            However, these metrics provide an incomplete analysis, particularly in the temporal assessment of video content, thus rendering them unreliable indicators of true video quality. 
+            Furthermore, while user studies have the potential to reflect human perception accurately, they are hampered by their time-intensive and laborious nature, with outcomes that are often tainted by subjective bias. 
+            In this paper, we investigate the limitations inherent in existing metrics and introduce a novel evaluation pipeline, the Text-to-Video Score (<b>T2VScore</b>). 
+            This metric integrates two pivotal criteria: (1) Text-Video Alignment, which scrutinizes the fidelity of the video in representing the given text description, and (2) Video Quality, which evaluates the video's overall production caliber with a mixture of experts. 
+            Moreover, to evaluate the proposed metrics and facilitate future improvements on them, we present the <b>TVGE</b> dataset, collecting human judgements of 2,543 text-to-video generated videos on the two criteria.
+            Experiments on the TVGE dataset demonstrate the superiority of the proposed T2VScore on offering a better metric for text-to-video generation. The code and dataset will be open-sourced.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--/ Abstract -->
+
+<!-- T2VScore-A -->
+<hr>
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-4 is-centered has-text-centered">Text-Video Alignment</h2>
+    <div class="caption">
+      How well does the video match the text prompt?
+    </div>
+    <div class="results-grid">
+      <div class="results-single" style="width:55%">
+        <video autoplay muted playsinline loop>
+          <source src="assets/text_alignment.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+    <br>
+    <div>
+      <b>T2VScore-A:</b> We first input the text pormpt into large language models (LLMs) to generate questions and answers. 
+      Utilizing CoTracker, we extract the auxiliary trajectory, which, along with the input video, 
+      is fed into multi-modal LLM for visual question answering (VQA). 
+      The final T2VScore-A is measured based on the accuracy of VQA.
+    </div>
+  </div>
+</section>
+<!-- T2VScore-A -->
+
+<!-- T2VScore-Q -->
+<hr>
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-4 is-centered has-text-centered">Video Quality</h2>
+    <div class="caption">
+      How good is the quality of the synthesized video?
+    </div>
+    <div class="results-grid">
+      <div class="results-single" style="width:55%">
+        <img src="assets/video_quality.jpg" />
+      </div>
+    </div>
+    <br>
+    <div>
+      <b>T2VScore-Q:</b> We select two evaluators with different biases as <i>technical</i> and <i>semantic</i> expert, and fuse their judgments to improve
+      generalization capacity of the video quality assessment.
+    </div>
+  </div>
+</section>
+<!-- T2VScore-Q -->
+
+<!-- Dataset -->
+<hr>
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-4 is-centered has-text-centered" style="margin-bottom:0;">Text-to-Video Generation Evaluation (TVGE) Dataset</h2>
+    <br>
+
+    <div class="results-grid">
+      <div class="results-single" style="width:55%">
+        <video autoplay muted playsinline loop>
+          <source src="assets/dataset.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+    <br>
+    <div>
+      An inalienable part of our study is to evaluate the reliability and robustness of the proposed metrics on text-conditioned generated videos. 
+      To this end, we propose the Text-to-Video Generation Evaluation (TVGE) dataset, collecting rich human opinions on the two perspectives (alignment & quality) studied in the T2V Score. 
+    </div>
+    <br>
+
+    <div class="columns is-vcentered">
+      <div class="column is-three-fifths">
+        <video autoplay muted playsinline loop>
+          <source src="assets/domain_gap.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="column is-two-fifths">
+        <p style="margin-left:25px;">
+          <b>Domain Gap with Natural Videos.</b> The common distortions in generated videos (as in TVGE dataset) are different from those in natural videos, both spatially and temporally.
+        </p>
+      </div>
+    </div>
+
+    <div class="columns is-vcentered">
+      <div class="column is-three-fifths">
+        <p style="margin-left:25px;">
+          <b>Score Distributions in TVGE.</b> In general, the generated videos receive lower-than-average human ratings on both perspectives, suggesting the need to continuously improve these methods to eventually produce plausible videos. 
+          Nevertheless, specific models also prove decent proficiency on one single dimension, e.g. Pika gets an average score of 3.45 on video quality. 
+          Between the two perspectives, we notice a very low correlation (0.223 Spearman’s ρ, 0.152 Kendall’s φ), proving that the two dimensions are different and should be considered independently.
+        </p>
+      </div>
+      <div class="column is-two-fifths">
+        <img src="assets/corr.jpg" />
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Dataset -->
+
+<hr>
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <!-- <h2 class="title is-4">Acknowledgements</h2>
+    <span>
+      We would like to thank xxx for helpful discussions and feedback.
+    </span> -->
+    <h2 class="title is-4">BibTeX</h2>
+    <pre><code>
+    @article{wu2024towards,
+      title={Towards A Better Metric for Text-to-Video Generation},
+      author={xxx},
+      journal={arXiv preprint arXiv:xxxx.xxxxx},
+      year={2024}
+    }
+    </code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            The website template is based on the
+            <a href="https://readout-guidance.github.io/">Readout Guidance</a> project page.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  });
+</script>
+<!-- <script>
+  const replay = document.querySelector('.replay');
+  replay.addEventListener('click', () => {
+      const video = document.getElementById("teaser")
+      video.currentTime = 0;
+      video.play();
+  });
+</script> -->
+</body>
+</html>
